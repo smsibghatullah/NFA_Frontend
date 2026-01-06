@@ -1,0 +1,38 @@
+{
+  "name": "nfa-offiical-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node server.js",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.11.0",
+    "@tabler/core": "^1.0.0-beta21",
+    "aos": "^2.3.4",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.8",
+    "cors": "^2.8.5",
+    "font-awesome": "^4.7.0",
+    "ionicons": "^7.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.3",
+    "multer": "^1.4.5-lts.1",
+    "next": "15.1.3",
+    "next-auth": "^4.24.11",
+    "nodemailer": "^6.9.16",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sweetalert": "^2.1.2",
+    "typeface-livvic": "^1.1.13",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.3"
+  }
+}
