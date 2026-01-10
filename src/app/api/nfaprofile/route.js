@@ -1,31 +1,22 @@
-// /app/api/nfaprofile/route.js
 import { NextResponse } from "next/server";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const body = await request.json();
-    const token = request.headers.get("authorization");
+    const token = req.headers.get("authorization");
+    const body = await req.json();
 
-    if (!token) {
-      return NextResponse.json({ message: "Missing token" }, { status: 401 });
-    }
-
-    const res = await fetch(`${API_BASE_URL}/api/candidates/profile/`, {
+    const res = await fetch(`${API_BASE_URL}/api/nfauser/profile`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token, // 🔥 Forward the same Bearer token
+        Authorization: token,
       },
       body: JSON.stringify(body),
     });
 
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
-  } catch (error) {
-    console.error("Profile API error:", error);
-    return NextResponse.json(
-      { message: "Server error while creating profile" },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: "Profile create failed" }, { status: 500 });
   }
 }

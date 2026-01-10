@@ -1,34 +1,27 @@
 import { NextResponse } from "next/server";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const token = request.headers.get("authorization");
-    if (!token) {
-      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
-    }
+    const token = req.headers.get("authorization"); // Bearer token 그대로
+    const formData = await req.formData();
 
-    // Get form data (supports file uploads)
-    const formData = await request.formData();
+    const res = await fetch(`${API_BASE_URL}/api/submit-application`, {
+      method: "POST",
+      headers: {
+        Authorization: token,
+      },
+      body: formData,
+    });
 
-    // ✅ Forward request to backend API
-    const backendResponse = await fetch(
-      `${API_BASE_URL}/api/candidates/applications/upload-details/`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-        body: formData,
-      }
-    );
+    const data = await res.json();
 
-    const data = await backendResponse.json();
-    return NextResponse.json(data, { status: backendResponse.status });
+    return NextResponse.json(data, { status: res.status });
   } catch (error) {
-    console.error("Application Submit Error:", error);
+    console.error("Application submit error:", error);
     return NextResponse.json(
-      { detail: "Server error while submitting application." },
+      { error: "Application submit failed" },
       { status: 500 }
     );
   }

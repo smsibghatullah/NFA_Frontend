@@ -24,7 +24,6 @@ export default function UserPortal() {
 
   // ✅ Open modal if eligible
 
-
   // ✅ Verify Token & Fetch Jobs
   useEffect(() => {
     const token = localStorage.getItem("access");
@@ -35,28 +34,30 @@ export default function UserPortal() {
     const checkProfile = async () => {
       try {
         const res = await fetch("/api/myprofile", {
-          headers: { Authorization: `Bearer ${token}` },
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && !data.detail) {
-            setProfileExists(true);
-            setProfileData(data);
-          }
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+
+        if (data?.profile) {
+          setProfileExists(true);
+          setProfileData(data.profile);
+          
         }
       } catch (err) {
         console.error("Error checking profile:", err);
       }
     };
 
-
-
     const fetchJobs = async () => {
       try {
         setJobsLoading(true);
-        const res = await fetch("/api/nfajobs", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch("/api/nfajobs");
 
         if (res.status === 401) {
           localStorage.removeItem("access");
@@ -66,7 +67,7 @@ export default function UserPortal() {
         }
 
         const data = await res.json();
-        setJobs(Array.isArray(data) ? data : []);
+        setJobs(Array.isArray(data.data) ? data.data : []);
       } catch (err) {
         console.error("Error fetching jobs:", err);
         setJobs([]);
@@ -75,53 +76,54 @@ export default function UserPortal() {
         setLoading(false);
       }
     };
-    fetchMyApplications(); // to refresh list
     checkProfile();
     fetchJobs();
+    fetchMyApplications(); // to refresh list
   }, [router]);
   // applying for job
   const handleApplyOnline = async (job) => {
     const token = localStorage.getItem("access");
+    // console.log(token);
+
     if (!token) return router.push("/");
 
     try {
       // disable button / show loader here if you want (optional)
-      const res = await fetch("/api/eligiblitycheck", {
-        method: "POST",
+      const res = await fetch(`/api/eligibility-check?job_id=${job.id}`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ job_id: job.id }),
       });
 
       const data = await res.json();
-      if (!res.ok) return showAlert("danger", data?.message || "Eligibility check failed.");
+      if (!res.ok)
+        return showAlert(
+          "danger",
+          data?.message || "Eligibility check failed."
+        );
 
-      const isEligible =
-        data?.eligible === true ||
-        data?.status === true ||
-        (typeof data?.status === "string" &&
-          ["eligible", "success", "ok"].includes(data.status.toLowerCase()));
-
-      const successMessage =
-        data?.reason || data?.message || "You are eligible for this job!";
-      const failMessage =
-        data?.reason || data?.message || "You are not eligible for this job.";
+      const isEligible = data?.eligible === true;
 
       if (isEligible) {
         setSelectedJob(job);
-        setShowApplyModal(true); // 👈 Open modal
+        setShowApplyModal(true);
       } else {
-        showAlert("danger", failMessage);
+        let errorMessage = "You are not eligible for this job.";
+
+        if (Array.isArray(data?.reasons)) {
+          errorMessage = data.reasons.join(" ");
+        } else if (data?.message) {
+          errorMessage = data.message;
+        }
+
+        showAlert("danger", errorMessage);
       }
     } catch (err) {
       console.error("Eligibility Check Error:", err);
-      showAlert("danger", "Error checking eligibility. Try again.");
+      showAlert("danger", "Error checking eligibility.");
     }
   };
-
-
 
   const fetchMyApplications = async () => {
     const token = localStorage.getItem("access");
@@ -135,7 +137,7 @@ export default function UserPortal() {
       const data = await res.json();
 
       if (res.ok) {
-        setApplications(data);
+        setApplications(data.data || []);
       } else {
         showAlert("danger", data?.error || "Failed to load applications");
       }
@@ -159,9 +161,12 @@ export default function UserPortal() {
     const phone = form.phone_number.value.trim();
 
     // 🔹 Validate Phone Number (must start with 03 and have 11 digits)
-    const phoneRegex = /^03\d{9}$/;
+    const phoneRegex = /^03[0-9]{9}$/;
     if (!phoneRegex.test(phone)) {
-      showAlert("danger", "Please enter a valid phone number (must start with 03 and be 11 digits).");
+      showAlert(
+        "danger",
+        "Please enter a valid phone number (must start with 03 and be 11 digits)."
+      );
       return;
     }
 
@@ -192,6 +197,8 @@ export default function UserPortal() {
         },
       ],
     };
+    // console.log(profileData);
+
     try {
       const res = await fetch("/api/nfaprofile", {
         method: "POST",
@@ -212,18 +219,12 @@ export default function UserPortal() {
 
       const data = await res.json();
 
-      if (res.ok) {
+      if (res.ok && data?.profile) {
         showAlert("success", "Profile created successfully!");
-
-        // ✅ Instantly update local state
         setProfileExists(true);
-        setProfileData(data);
+        setProfileData(data.profile);
+        
         setActivePage("myProfile");
-
-        // ✅ Optional small delay + reload to refresh API-based data
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       } else {
         showAlert("danger", data?.detail || "Failed to create profile.");
       }
@@ -232,8 +233,6 @@ export default function UserPortal() {
       showAlert("danger", "Error creating profile.");
     }
   };
-
-
 
   // ✅ Logout Handler
   const handleLogout = () => {
@@ -250,45 +249,48 @@ export default function UserPortal() {
 
   // ✅ Submit Application Form
   // ✅ Submit Application Form
-  const handleApplicationSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("access");
-    if (!token) return router.push("/");
+ const handleApplicationSubmit = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem("access");
+  if (!token) return router.push("/");
 
-    const formData = new FormData(e.target);
-    formData.append("job_listing", selectedJob?.id);
+  const formData = new FormData(e.target);
+  // formData.append("job_id", selectedJob.id); // ✅ Required by backend
 
-    try {
-      setUploading(true);
-      const res = await fetch("/api/applicationsubmit", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+  try {
+    setUploading(true);
 
-      const data = await res.json();
-
-      if (res.ok) {
-        showAlert("success", "Application submitted successfully!");
-        setShowApplyModal(false);
-
-        // ✅ Email send after successful application
-       // ✅ Email send after successful application
-try {
-  const userEmail = profileData?.email;
-  console.log("Sending email to:", userEmail);
-
-  if (!userEmail) {
-    console.error("No email found for this user");
-  } else {
-    await fetch("/api/application-email", {
+    const res = await fetch("/api/applicationsubmit", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: userEmail, // Correct email path
-        subject: `Application Received for ${selectedJob?.job_post?.title || "Job"}`,
-        message: `
-Dear ${profileData?.user?.username || "Applicant"},
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      showAlert("success", "Application submitted successfully!");
+      setShowApplyModal(false);
+
+      // ✅ Email send after successful application
+      try {
+        const userEmail = profileData?.user?.email;
+        const userName = profileData?.user?.name || "Applicant";
+        console.log("Sending email to:", userEmail);
+
+        if (!userEmail) {
+          console.error("No email found for this user");
+        } else {
+          await fetch("/api/application-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              to: userEmail,
+              subject: `Application Received for ${selectedJob?.job_post?.title || "Job"}`,
+              message: `
+Dear ${userName},
 
 Your application for the position "${selectedJob?.job_post?.title || "NFA Job"}" has been successfully received.
 
@@ -296,31 +298,31 @@ We’ll review your profile and get back to you soon.
 
 Best Regards,  
 NFA Team
-        `,
-      }),
-    });
-  }
-} catch (emailErr) {
-  console.error("Email sending failed:", emailErr);
-}
-
-
-        // ✅ Optionally refresh applications list
-        fetchMyApplications();
-      } else {
-        showAlert("danger", data?.detail || "Failed to submit application.");
+              `,
+            }),
+          });
+        }
+      } catch (emailErr) {
+        console.error("Email sending failed:", emailErr);
       }
-    } catch (err) {
-      console.error("Upload Error:", err);
-      showAlert("danger", "Error uploading application.");
-    } finally {
-      setUploading(false);
+
+      // ✅ Optionally refresh applications list
+      fetchMyApplications();
+    } else {
+      showAlert("danger", data?.message || "Application failed");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    showAlert("danger", "Upload error");
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   // ✅ Check if job is already applied
   const isJobApplied = (jobId) => {
-    return applications.some(app => app.job_listing === jobId);
+    return applications.some((app) => app.job_id === jobId);
   };
 
   // ✅ Loading Screen
@@ -350,11 +352,15 @@ NFA Team
           </div>
         )}
 
-        <div className="d-flex align-items-start" style={{ minHeight: "100vh" }}>
+        <div
+          className="d-flex align-items-start"
+          style={{ minHeight: "100vh" }}
+        >
           {/* ✅ Sidebar */}
           <aside
-            className={`text-white rounded p-3 position-absolute transition-all ${sidebarOpen ? "d-block" : "d-none d-md-block"
-              }`}
+            className={`text-white rounded p-3 position-absolute transition-all ${
+              sidebarOpen ? "d-block" : "d-none d-md-block"
+            }`}
             style={{
               backgroundColor: "#023d29",
               width: "240px",
@@ -363,20 +369,21 @@ NFA Team
               // top: 0,
               zIndex: 10,
             }}
-
-
           >
             <h3 className="text-center mb-4 border-bottom pb-2">Dashboard</h3>
             <nav className="nav flex-column">
               <button
-                className={`nav-link text-white fw-bold text-start mb-2 btn btn-link ${activePage === "jobs" ? "text-warning" : ""
-                  }`}
+                className={`nav-link text-white fw-bold text-start mb-2 btn btn-link ${
+                  activePage === "jobs" ? "text-warning" : ""
+                }`}
                 onClick={() => setActivePage("jobs")}
               >
                 <i className="bi bi-briefcase me-2"></i> Available Jobs
               </button>
               <button
-                className={`nav-link text-white fw-bold text-start mb-2 btn btn-link ${activePage === "myapplications" ? "text-warning" : ""}`}
+                className={`nav-link text-white fw-bold text-start mb-2 btn btn-link ${
+                  activePage === "myapplications" ? "text-warning" : ""
+                }`}
                 onClick={() => {
                   setActivePage("myapplications");
                   fetchMyApplications(); // 👈 Fetch on click
@@ -386,10 +393,11 @@ NFA Team
               </button>
 
               <button
-                className={`nav-link text-white fw-bold text-start mb-2 btn btn-link ${activePage === (profileExists ? "myProfile" : "createProfile")
-                  ? "text-warning"
-                  : ""
-                  }`}
+                className={`nav-link text-white fw-bold text-start mb-2 btn btn-link ${
+                  activePage === (profileExists ? "myProfile" : "createProfile")
+                    ? "text-warning"
+                    : ""
+                }`}
                 onClick={() =>
                   setActivePage(profileExists ? "myProfile" : "createProfile")
                 }
@@ -397,8 +405,6 @@ NFA Team
                 <i className="bi bi-person-plus me-2"></i>{" "}
                 {profileExists ? "My Profile" : "Create Profile"}
               </button>
-
-
             </nav>
             <button
               onClick={handleLogout}
@@ -606,42 +612,42 @@ NFA Team
                             <div className="card-body d-flex flex-column justify-content-between">
                               <div>
                                 <h5 className="card-title text-primary">
-                                  {job.job_post?.title || "Untitled Job"}
+                                  {job.job_title}
                                 </h5>
+
                                 <p className="mb-1">
-                                  <strong>Status:</strong>{" "}
-                                  <span
-                                    className={`badge ${job.status === "open"
-                                      ? "bg-success"
-                                      : "bg-secondary"
-                                      }`}
-                                  >
-                                    {job.status}
-                                  </span>
+                                  <strong>Location:</strong> {job.location}
                                 </p>
+
                                 <p className="mb-1">
-                                  <strong>Location:</strong> {job.location || "N/A"}
+                                  <strong>Deadline:</strong>{" "}
+                                  {job.application_deadline}
                                 </p>
+
                                 <p className="mb-1">
-                                  <strong>Deadline:</strong> {job.application_deadline}
+                                  <strong>Salary:</strong> {job.salary_range}
                                 </p>
+
                                 <p className="mb-1">
-                                  <strong>Salary:</strong> {job.salary_range || "N/A"}
+                                  <strong>Education:</strong>{" "}
+                                  {job.required_education}
                                 </p>
-                                <p className="mb-1">
-                                  <strong>Qualification:</strong>{" "}
-                                  {job.minimum_qualification || "Not specified"}
-                                </p>
+
                                 <p className="mb-1">
                                   <strong>Experience:</strong>{" "}
                                   {job.required_experience
-                                    ? `${job.required_experience} year(s)`
+                                    ? `${job.required_experience} month(s)`
                                     : "Not mentioned"}
                                 </p>
                               </div>
 
                               {isJobApplied(job.id) ? (
-                                <button className="btn btn-secondary mt-3 w-100 fw-semibold" disabled>Applied</button>
+                                <button
+                                  className="btn btn-secondary mt-3 w-100 fw-semibold"
+                                  disabled
+                                >
+                                  Applied
+                                </button>
                               ) : (
                                 <button
                                   className="btn btn-primary mt-3 w-100 fw-semibold"
@@ -650,7 +656,6 @@ NFA Team
                                   Apply Online
                                 </button>
                               )}
-
                             </div>
                           </div>
                         </div>
@@ -678,9 +683,9 @@ NFA Team
                                 {app.job_title || "Untitled Job"}
                               </h5>
 
-
                               <p>
-                                <strong>Description:</strong> {app.description || "No description"}
+                                <strong>Description:</strong>{" "}
+                                {app.description || "No description"}
                               </p>
 
                               {/* ✅ Download Links */}
@@ -727,45 +732,71 @@ NFA Team
                 </>
               )}
 
-
               {/* ✅ My Profile Section */}
               {activePage === "myProfile" && profileData && (
                 <>
-                  <h1 className="mb-4">👤 My Profile</h1>
+                  <h1 className="mb-4">My Profile</h1>
                   <div className="card shadow-sm p-4 mb-4">
-                    <p><strong>Date of Birth:</strong> {profileData.date_of_birth}</p>
-                    <p><strong>Phone:</strong> {profileData.phone_number}</p>
-                    <p><strong>Address:</strong> {profileData.postal_address}</p>
-                    <p><strong>Bio:</strong> {profileData.bio}</p>
+                    <p>
+                      <strong>Date of Birth:</strong>{" "}
+                      {profileData.date_of_birth}
+                    </p>
+                    <p>
+                      <strong>Phone:</strong> {profileData.phone_number}
+                    </p>
+                    <p>
+                      <strong>Address:</strong> {profileData.postal_address}
+                    </p>
+                    <p>
+                      <strong>Bio:</strong> {profileData.bio}
+                    </p>
                   </div>
 
-                  <h4>🎓 Education</h4>
+                  <h4>Education</h4>
                   {profileData.educations?.map((edu) => (
                     <div key={edu.id} className="card p-3 mb-3">
-                      <p><strong>Institution:</strong> {edu.institution_name}</p>
-                      <p><strong>Degree:</strong> {edu.degree}</p>
-                      <p><strong>Field:</strong> {edu.field_of_study}</p>
-                      <p><strong>Grade:</strong> {edu.grade}</p>
-                      <p><strong>Description:</strong> {edu.description}</p>
+                      <p>
+                        <strong>Institution:</strong> {edu.institution_name}
+                      </p>
+                      <p>
+                        <strong>Degree:</strong> {edu.degree}
+                      </p>
+                      <p>
+                        <strong>Field:</strong> {edu.field_of_study}
+                      </p>
+                      <p>
+                        <strong>Grade:</strong> {edu.grade}
+                      </p>
+                      <p>
+                        <strong>Description:</strong> {edu.description}
+                      </p>
                     </div>
                   ))}
 
-                  <h4>💼 Work History</h4>
+                  <h4>Work History</h4>
                   {profileData.work_histories?.map((work) => (
                     <div key={work.id} className="card p-3 mb-3">
-                      <p><strong>Company:</strong> {work.company_name}</p>
-                      <p><strong>Title:</strong> {work.job_title}</p>
-                      <p><strong>Responsibilities:</strong> {work.responsibilities}</p>
-                      <p><strong>Current:</strong> {work.is_current ? "Yes" : "No"}</p>
+                      <p>
+                        <strong>Company:</strong> {work.company_name}
+                      </p>
+                      <p>
+                        <strong>Title:</strong> {work.job_title}
+                      </p>
+                      <p>
+                        <strong>Responsibilities:</strong>{" "}
+                        {work.responsibilities}
+                      </p>
+                      <p>
+                        <strong>Current:</strong>{" "}
+                        {work.is_current ? "Yes" : "No"}
+                      </p>
                     </div>
                   ))}
                 </>
               )}
-
             </div>
           </main>
         </div>
-      </div>
       {/* ✅ Application Upload Modal */}
       {showApplyModal && (
         <div
@@ -788,26 +819,39 @@ NFA Team
               <form onSubmit={handleApplicationSubmit}>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label">CNIC File</label>
-                    <input type="file" name="cnic" className="form-control" required />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">CV File</label>
-                    <input type="file" name="cv" className="form-control" required />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Cover Letter</label>
-                    <input type="file" name="cover_letter" className="form-control" required />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Description</label>
-                    <textarea
-                      name="description"
+                    <input
+                      type="hidden"
+                      name="job_id"
+                      value={selectedJob?.id}
+                    />
+
+                    <label className="form-label">CV</label>
+                    <input
+                      type="file"
+                      name="cv"
                       className="form-control"
-                      placeholder="Brief description of your skills or experience"
-                      rows="3"
                       required
-                    ></textarea>
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Degree</label>
+                    <input
+                      type="file"
+                      name="degree"
+                      className="form-control"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">CNIC</label>
+                    <input
+                      type="file"
+                      name="cnic"
+                      className="form-control"
+                      required
+                    />
                   </div>
                 </div>
 
@@ -819,7 +863,11 @@ NFA Team
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="btn btn-success" disabled={uploading}>
+                  <button
+                    type="submit"
+                    className="btn btn-success"
+                    disabled={uploading}
+                  >
                     {uploading ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2"></span>
@@ -835,7 +883,7 @@ NFA Team
           </div>
         </div>
       )}
-
+      </div>
     </Header>
   );
 }

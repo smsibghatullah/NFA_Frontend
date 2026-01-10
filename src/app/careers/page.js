@@ -39,7 +39,13 @@ const Careers = () => {
           throw new Error(errorData.detail || "Failed to fetch documents.");
         }
         const data = await res.json();
-        setDocuments(data);
+
+if (!data.status) {
+  throw new Error("API returned false status");
+}
+
+setDocuments(data.documents); // 👈 correct array
+
       } catch (error) {
         console.error("Error fetching documents:", error);
         showAlert("danger", error.message || "Something went wrong while fetching documents.");
@@ -51,95 +57,82 @@ const Careers = () => {
   }, []);
 
   // 🔹 Handle Login
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setAlert({ type: "", message: "" });
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setAlert({ type: "", message: "" });
 
-    if (!loginForm.password) return showAlert("danger", "Password is required.");
-    if (!loginForm.email && !loginForm.cnic)
-      return showAlert("danger", "Please enter your Email or CNIC.");
+  if (!loginForm.password)
+    return showAlert("danger", "Password is required");
 
-    try {
-      const payload = {};
-      if (loginForm.email) payload.email = loginForm.email;
-      if (loginForm.cnic) payload.cnic = loginForm.cnic;
-      payload.password = loginForm.password;
+  if (!loginForm.email && !loginForm.cnic)
+    return showAlert("danger", "Email or CNIC required");
 
-      const res = await fetch("/api/nfaapplicantlogin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+  try {
+    const payload = {
+      login: loginForm.email || loginForm.cnic,
+      password: loginForm.password,
+    };
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Login failed. Please check your credentials.");
+    const res = await fetch("/api/nfaapplicantlogin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-      // ✅ Save tokens
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
+    const data = await res.json();
+if (!res.ok) {
+  throw new Error(data.message || "Invalid credentials");
+}
 
-      // ✅ Close modal safely
-      if (typeof document !== "undefined") {
-        const modalEl = document.getElementById("authModal");
-        let modal = null;
-        try {
-          modal = bootstrap?.Modal?.getInstance(modalEl);
-        } catch (e) {}
-        if (modal) modal.hide();
-        else if (modalEl) {
-          modalEl.classList.remove("show");
-          modalEl.style.display = "none";
-        }
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) backdrop.remove();
-        document.body.classList.remove("modal-open");
-        document.body.style.overflow = "";
-        document.body.style.paddingRight = "";
-      }
+// 🔐 Token save
+localStorage.setItem("access", data.token);
 
-      showAlert("success", "Login successful!");
-      setLoginForm({ email: "", cnic: "", password: "" });
-      router.push("/userportal");
-    } catch (err) {
-      console.error("Login Error:", err);
-      showAlert("danger", err.message || "Login failed. Try again later.");
-    }
-  };
+// ✅ CLEANUP MODAL SIDE EFFECT
+document.body.classList.remove("modal-open");
+document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+
+showAlert("success", "Login successful");
+setLoginForm({ email: "", cnic: "", password: "" });
+
+router.push("/userportal");
+}catch (err) {
+    showAlert("danger", err.message);
+  }
+};
+
 
   // 🔹 Handle Register
  const handleRegister = async (e) => {
   e.preventDefault();
   setAlert({ type: "", message: "" });
 
-  // ✅ Validate passwords match
   if (registerForm.password !== registerForm.password2) {
-    return showAlert("danger", "Passwords do not match.");
-  }
-
-  // ✅ Basic validation
-  if (!registerForm.email || !registerForm.cnic || !registerForm.password) {
-    return showAlert("danger", "Email, CNIC, and password are required.");
+    return showAlert("danger", "Passwords do not match");
   }
 
   try {
+    const payload = {
+      name: `${registerForm.first_name} ${registerForm.last_name}`,
+      email: registerForm.email,
+      cnic: registerForm.cnic,
+      number: registerForm.number || "03000000000",
+      password: registerForm.password,
+    };
+
     const res = await fetch("/api/nfaapplicantregister", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(registerForm),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      // 🔹 Check for duplicate email or CNIC
-      if (data?.email) throw new Error("This email is already registered.");
-      if (data?.cnic) throw new Error("This CNIC is already registered.");
-      // 🔹 Fallback generic error
-      const msg = data.detail || data.error || "Registration failed. Please try again.";
-      throw new Error(msg);
+      throw new Error(data.message || "Registration failed");
     }
 
-    showAlert("success", "Registration successful! You can now log in.");
+    showAlert("success", "Registration successful! Login now.");
+
     setRegisterForm({
       email: "",
       cnic: "",
@@ -147,12 +140,13 @@ const Careers = () => {
       password2: "",
       first_name: "",
       last_name: "",
+      number: "",
     });
   } catch (err) {
-    console.error("Registration Error:", err);
-    showAlert("danger", err.message || "Registration failed. Try again later.");
+    showAlert("danger", err.message);
   }
 };
+
 
 
   return (
@@ -190,27 +184,25 @@ const Careers = () => {
             ) : (
               documents.map((doc) => (
                 <div className="col-md-6 mb-4" key={doc.id}>
-                  <a
-                    href={doc.file}
-                    target="_blank"
-                    className="text-decoration-none"
-                    rel="noopener noreferrer"
-                  >
-                    <div className="card shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title text-dark">
-                          <strong>{doc.title}</strong>
-                        </h5>
-                        {doc.published_on && (
-                          <p className="text-end mb-1">
-                            Published On {doc.published_on}
-                          </p>
-                        )}
-                        {doc.purpose && <p>{doc.purpose}</p>}
-                      </div>
-                    </div>
-                  </a>
-                </div>
+  <a
+    href={doc.file_url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-decoration-none"
+  >
+    <div className="card shadow-sm">
+      <div className="card-body">
+        <h5 className="card-title text-dark">
+          <strong>{doc.name}</strong>
+        </h5>
+
+        <p className="text-muted text-end mb-0">
+          Uploaded on {new Date(doc.created_at).toLocaleDateString()}
+        </p>
+      </div>
+    </div>
+  </a>
+</div>
               ))
             )}
           </div>

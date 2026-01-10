@@ -1,10 +1,10 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export async function POST(req) {
   try {
     const body = await req.json();
 
-    // Backend login API ko call karo
-    const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
+    const response = await fetch(`${API_BASE_URL}/api/nfauser/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -17,9 +17,9 @@ export async function POST(req) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Something went wrong" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ message: "Login proxy error" }),
+      { status: 500 }
+    );
   }
 }
