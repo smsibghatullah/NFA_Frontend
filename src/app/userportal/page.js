@@ -433,24 +433,26 @@ export default function UserPortal() {
           if (!userEmail) {
             console.error("No email found for this user");
           } else {
-            await fetch("/api/application-email", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                to: userEmail,
-                subject: `Application Received for ${selectedJob?.job_post?.title || "Job"}`,
-                message: `
-Dear ${userName},
+            console.log('smtp temporary block due to limitation of server');
+            
+//             await fetch("/api/application-email", {
+//               method: "POST",
+//               headers: { "Content-Type": "application/json" },
+//               body: JSON.stringify({
+//                 to: userEmail,
+//                 subject: `Application Received for ${selectedJob?.job_post?.title || "Job"}`,
+//                 message: `
+// Dear ${userName},
 
-Your application for the position "${selectedJob?.job_post?.title || "NFA Job"}" has been successfully received.
+// Your application for the position "${selectedJob?.job_post?.title || "NFA Job"}" has been successfully received.
 
-We’ll review your profile and get back to you soon.
+// We’ll review your profile and get back to you soon.
 
-Best Regards,  
-NFA Team
-              `,
-              }),
-            });
+// Best Regards,  
+// NFA Team
+//               `,
+//               }),
+//             });
           }
         } catch (emailErr) {
           console.error("Email sending failed:", emailErr);
