@@ -1,22 +1,52 @@
+// src/app/api/nfaprofile/route.js
 import { NextResponse } from "next/server";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export async function POST(req) {
   try {
     const token = req.headers.get("authorization");
-    const body = await req.json();
+
+    if (!token) {
+      return NextResponse.json(
+        { status: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const formData = await req.formData();
 
     const res = await fetch(`${API_BASE_URL}/api/nfauser/profile`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: token.startsWith("Bearer ")
+          ? token
+          : `Bearer ${token}`,
       },
-      body: JSON.stringify(body),
+      body: formData,
     });
 
-    const data = await res.json();
+    const text = await res.text(); // 🔥 read as TEXT first
+
+    // ❌ backend HTML error
+    if (!text.startsWith("{")) {
+      console.error("BACKEND HTML ERROR:\n", text);
+      return NextResponse.json(
+        {
+          status: false,
+          error: "Backend error (not JSON). Check Laravel logs.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const data = JSON.parse(text);
     return NextResponse.json(data, { status: res.status });
-  } catch {
-    return NextResponse.json({ error: "Profile create failed" }, { status: 500 });
+  } catch (error) {
+    console.error("NFAPROFILE ERROR:", error);
+    return NextResponse.json(
+      { status: false, error: "Profile create failed" },
+      { status: 500 }
+    );
   }
 }
