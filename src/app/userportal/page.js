@@ -59,7 +59,7 @@ export default function UserPortal() {
 
   // 🌐 States
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [jobsLoading, setJobsLoading] = useState(true);
   const [activePage, setActivePage] = useState("jobs");
@@ -78,6 +78,16 @@ export default function UserPortal() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [uploading, setUploading] = useState(false);
+const [sidebarOpen, setSidebarOpen] = useState(false);
+useEffect(() => {
+  document.body.style.overflow = "auto";
+  document.body.style.position = "static";
+
+  return () => {
+    document.body.style.overflow = "auto";
+    document.body.style.position = "static";
+  };
+}, []);
 
   // ✅ Personal Info
   const [personal, setPersonal] = useState({

@@ -1,3 +1,10 @@
 {
-  "/page": "app/page.js"
+  "/api/documents/route": "app/api/documents/route.js",
+  "/api/nfaapplicantlogin/route": "app/api/nfaapplicantlogin/route.js",
+  "/api/myprofile/route": "app/api/myprofile/route.js",
+  "/api/nfajobs/route": "app/api/nfajobs/route.js",
+  "/api/myapplication/route": "app/api/myapplication/route.js",
+  "/careers/page": "app/careers/page.js",
+  "/page": "app/page.js",
+  "/userportal/page": "app/userportal/page.js"
 }
