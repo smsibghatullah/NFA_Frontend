@@ -12,7 +12,9 @@ export async function GET(req) {
   try {
     const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${path}`;
 
-    const response = await fetch(apiUrl);
+const response = await fetch(apiUrl, {
+  cache: "force-cache",
+});
 
     if (!response.ok) {
       return NextResponse.json(

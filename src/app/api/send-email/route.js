@@ -9,18 +9,19 @@ export async function POST(req) {
     const { formData, attachment } = await req.json();
 
     // Configure the Nodemailer transporter
-    let transporter = nodemailer.createTransport({
-      host: "smtp.hostinger.com", // SMTP server address
-      port: 465, // Port for secure email sending
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER, // SMTP username from environment variables
-        pass: process.env.EMAIL_PASS, // SMTP password from environment variables
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+ let transporter = nodemailer.createTransport({
+  host: "smtp.hostinger.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  pool: true,
+  maxConnections: 2,
+  maxMessages: 100,
+  tls: { rejectUnauthorized: false },
+});
 
     // Define the email options based on whether files are provided
     let mailOptions;

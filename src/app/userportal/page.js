@@ -469,7 +469,6 @@ export default function UserPortal() {
         }
 
         // ✅ Optionally refresh applications list
-        fetchMyApplications();
       } else {
         showAlert("danger", data?.message || "Application failed");
       }
@@ -524,7 +523,6 @@ export default function UserPortal() {
                   }`}
                 onClick={() => {
                   setActivePage("myapplications");
-                  fetchMyApplications();
                 }}
               >
                 My Applications
