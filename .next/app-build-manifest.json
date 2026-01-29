@@ -16,58 +16,6 @@
       "static/chunks/main-app.js",
       "static/css/app/page.css",
       "static/chunks/app/page.js"
-    ],
-    "/careers/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/careers/page.css",
-      "static/chunks/app/careers/page.js"
-    ],
-    "/api/documents/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/documents/route.js"
-    ],
-    "/api/nfaapplicantlogin/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/nfaapplicantlogin/route.js"
-    ],
-    "/userportal/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/userportal/page.css",
-      "static/chunks/app/userportal/page.js"
-    ],
-    "/api/myprofile/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/myprofile/route.js"
-    ],
-    "/api/myapplication/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/myapplication/route.js"
-    ],
-    "/api/nfajobs/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/nfajobs/route.js"
-    ],
-    "/api/eligibility-check/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/eligibility-check/route.js"
-    ],
-    "/api/applicationsubmit/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/applicationsubmit/route.js"
-    ],
-    "/api/nfaprofile/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/nfaprofile/route.js"
     ]
   }
 }

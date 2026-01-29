@@ -78,16 +78,16 @@ export default function UserPortal() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [uploading, setUploading] = useState(false);
-const [sidebarOpen, setSidebarOpen] = useState(false);
-useEffect(() => {
-  document.body.style.overflow = "auto";
-  document.body.style.position = "static";
-
-  return () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  useEffect(() => {
     document.body.style.overflow = "auto";
     document.body.style.position = "static";
-  };
-}, []);
+
+    return () => {
+      document.body.style.overflow = "auto";
+      document.body.style.position = "static";
+    };
+  }, []);
 
   // ✅ Personal Info
   const [personal, setPersonal] = useState({
@@ -444,25 +444,25 @@ useEffect(() => {
             console.error("No email found for this user");
           } else {
             console.log('smtp temporary block due to limitation of server');
-            
-//             await fetch("/api/application-email", {
-//               method: "POST",
-//               headers: { "Content-Type": "application/json" },
-//               body: JSON.stringify({
-//                 to: userEmail,
-//                 subject: `Application Received for ${selectedJob?.job_post?.title || "Job"}`,
-//                 message: `
-// Dear ${userName},
 
-// Your application for the position "${selectedJob?.job_post?.title || "NFA Job"}" has been successfully received.
+            //             await fetch("/api/application-email", {
+            //               method: "POST",
+            //               headers: { "Content-Type": "application/json" },
+            //               body: JSON.stringify({
+            //                 to: userEmail,
+            //                 subject: `Application Received for ${selectedJob?.job_post?.title || "Job"}`,
+            //                 message: `
+            // Dear ${userName},
 
-// We’ll review your profile and get back to you soon.
+            // Your application for the position "${selectedJob?.job_post?.title || "NFA Job"}" has been successfully received.
 
-// Best Regards,  
-// NFA Team
-//               `,
-//               }),
-//             });
+            // We’ll review your profile and get back to you soon.
+
+            // Best Regards,  
+            // NFA Team
+            //               `,
+            //               }),
+            //             });
           }
         } catch (emailErr) {
           console.error("Email sending failed:", emailErr);
@@ -513,17 +513,15 @@ useEffect(() => {
             <h3 className="text-center mb-4 border-bottom pb-2">Dashboard</h3>
             <nav className="nav flex-column">
               <button
-                className={`nav-link text-white btn btn-link ${
-                  activePage === "jobs" ? "text-warning" : ""
-                }`}
+                className={`nav-link text-white btn btn-link ${activePage === "jobs" ? "text-warning" : ""
+                  }`}
                 onClick={() => setActivePage("jobs")}
               >
                 Available Jobs
               </button>
               <button
-                className={`nav-link text-white btn btn-link ${
-                  activePage === "myapplications" ? "text-warning" : ""
-                }`}
+                className={`nav-link text-white btn btn-link ${activePage === "myapplications" ? "text-warning" : ""
+                  }`}
                 onClick={() => {
                   setActivePage("myapplications");
                   fetchMyApplications();
@@ -532,11 +530,10 @@ useEffect(() => {
                 My Applications
               </button>
               <button
-                className={`nav-link text-white btn btn-link ${
-                  activePage === (profileExists ? "myProfile" : "createProfile")
-                    ? "text-warning"
-                    : ""
-                }`}
+                className={`nav-link text-white btn btn-link ${activePage === (profileExists ? "myProfile" : "createProfile")
+                  ? "text-warning"
+                  : ""
+                  }`}
                 onClick={() =>
                   setActivePage(profileExists ? "myProfile" : "createProfile")
                 }
@@ -1028,7 +1025,7 @@ useEffect(() => {
                         <img
                           src={
                             profileData.profile_picture
-                              ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${profileData.profile_picture}`
+                              ? `/api/proxy-image?path=${encodeURIComponent(profileData.profile_picture)}`
                               : "/default-avatar.png"
                           }
                           className="img-fluid rounded-circle mb-2"
@@ -1038,6 +1035,8 @@ useEffect(() => {
                             objectFit: "cover",
                           }}
                         />
+
+
                         <h5>
                           {profileData.first_name} {profileData.last_name}
                         </h5>
