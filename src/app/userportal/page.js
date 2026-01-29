@@ -443,7 +443,7 @@ export default function UserPortal() {
           if (!userEmail) {
             console.error("No email found for this user");
           } else {
-            console.log('smtp temporary block due to limitation of server');
+            console.log("smtp temporary block due to limitation of server");
 
             //             await fetch("/api/application-email", {
             //               method: "POST",
@@ -458,7 +458,7 @@ export default function UserPortal() {
 
             // We’ll review your profile and get back to you soon.
 
-            // Best Regards,  
+            // Best Regards,
             // NFA Team
             //               `,
             //               }),
@@ -512,15 +512,17 @@ export default function UserPortal() {
             <h3 className="text-center mb-4 border-bottom pb-2">Dashboard</h3>
             <nav className="nav flex-column">
               <button
-                className={`nav-link text-white btn btn-link ${activePage === "jobs" ? "text-warning" : ""
-                  }`}
+                className={`nav-link text-white btn btn-link ${
+                  activePage === "jobs" ? "text-warning" : ""
+                }`}
                 onClick={() => setActivePage("jobs")}
               >
                 Available Jobs
               </button>
               <button
-                className={`nav-link text-white btn btn-link ${activePage === "myapplications" ? "text-warning" : ""
-                  }`}
+                className={`nav-link text-white btn btn-link ${
+                  activePage === "myapplications" ? "text-warning" : ""
+                }`}
                 onClick={() => {
                   setActivePage("myapplications");
                 }}
@@ -528,10 +530,11 @@ export default function UserPortal() {
                 My Applications
               </button>
               <button
-                className={`nav-link text-white btn btn-link ${activePage === (profileExists ? "myProfile" : "createProfile")
-                  ? "text-warning"
-                  : ""
-                  }`}
+                className={`nav-link text-white btn btn-link ${
+                  activePage === (profileExists ? "myProfile" : "createProfile")
+                    ? "text-warning"
+                    : ""
+                }`}
                 onClick={() =>
                   setActivePage(profileExists ? "myProfile" : "createProfile")
                 }
@@ -577,7 +580,7 @@ export default function UserPortal() {
                   onSubmit={handleProfileSubmit}
                   encType="multipart/form-data"
                 >
-                  <FormSection
+                  {/* <FormSection
                     title="Personal Information"
                     subtitle="Basic identity & contact details"
                   >
@@ -674,6 +677,150 @@ export default function UserPortal() {
                               value={personal[key]}
                               className="form-control"
                               onChange={handlePersonalChange}
+                              required
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </FormSection> */}
+                  <FormSection
+                    title="Personal Information"
+                    subtitle="Basic identity & contact details"
+                  >
+                    <div className="row">
+                      {[
+                        {
+                          key: "profile_picture",
+                          type: "file",
+                          label: "Profile Picture",
+                        },
+                        {
+                          key: "first_name",
+                          type: "text",
+                          label: "First Name",
+                        },
+                        { key: "last_name", type: "text", label: "Last Name" },
+                        { key: "cnic", type: "number", label: "CNIC" },
+                        {
+                          key: "father_name",
+                          type: "text",
+                          label: "Father Name",
+                        },
+                        {
+                          key: "phone_number",
+                          type: "text",
+                          label: "Phone Number",
+                        },
+                        {
+                          key: "date_of_birth",
+                          type: "date",
+                          label: "Date of Birth",
+                        },
+                        {
+                          key: "gender",
+                          type: "select",
+                          label: "Gender",
+                          options: ["male", "female", "other"],
+                        },
+                        {
+                          key: "marital_status",
+                          type: "select",
+                          label: "Marital Status",
+                          options: ["single", "married"],
+                        },
+                        {
+                          key: "current_occupation",
+                          type: "select",
+                          label: "Current Occupation",
+                          options: ["government", "private", "unemployed"],
+                        },
+                        {
+                          key: "nationality",
+                          type: "text",
+                          label: "Nationality",
+                        },
+                        { key: "religion", type: "text", label: "Religion" },
+                        {
+                          key: "domicile_city",
+                          type: "text",
+                          label: "Domicile City",
+                        },
+                        {
+                          key: "domicile_province",
+                          type: "text",
+                          label: "Domicile Province",
+                        },
+                        {
+                          key: "permanent_address",
+                          type: "text",
+                          label: "Permanent Address",
+                        },
+                        {
+                          key: "current_address",
+                          type: "text",
+                          label: "Current Address",
+                        },
+                        {
+                          key: "postal_address",
+                          type: "text",
+                          label: "Postal Address",
+                        },
+                        { key: "bio", type: "text", label: "Bio" },
+                      ].map((field) => {
+                        if (field.type === "file") {
+                          return (
+                            <div className="col-md-6 mb-3" key={field.key}>
+                              <label>{field.label}</label>
+                              <input
+                                type="file"
+                                name={field.key}
+                                className="form-control"
+                                accept="image/*"
+                                onChange={handlePersonalChange}
+                              />
+                              {profileExists &&
+                                profileData?.profile_picture && (
+                                  <small className="text-muted">
+                                    Leave empty to keep existing picture
+                                  </small>
+                                )}
+                            </div>
+                          );
+                        }
+
+                        if (field.type === "select") {
+                          return (
+                            <div className="col-md-6 mb-3" key={field.key}>
+                              <label>{field.label}</label>
+                              <select
+                                name={field.key}
+                                className="form-control"
+                                value={personal[field.key]}
+                                onChange={handlePersonalChange}
+                                required
+                              >
+                                <option value="">Select {field.label}</option>
+                                {field.options.map((opt) => (
+                                  <option key={opt} value={opt}>
+                                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          );
+                        }
+
+                        // Default text input
+                        return (
+                          <div className="col-md-6 mb-3" key={field.key}>
+                            <label>{field.label}</label>
+                            <input
+                              type={field.type}
+                              name={field.key}
+                              value={personal[field.key] || ""}
+                              onChange={handlePersonalChange}
+                              className="form-control"
                               required
                             />
                           </div>
@@ -1033,7 +1180,6 @@ export default function UserPortal() {
                             objectFit: "cover",
                           }}
                         />
-
 
                         <h5>
                           {profileData.first_name} {profileData.last_name}

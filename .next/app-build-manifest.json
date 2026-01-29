@@ -17,16 +17,57 @@
       "static/css/app/page.css",
       "static/chunks/app/page.js"
     ],
-    "/downloads/page": [
+    "/careers/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/downloads/page.css",
-      "static/chunks/app/downloads/page.js"
+      "static/css/app/careers/page.css",
+      "static/chunks/app/careers/page.js"
     ],
-    "/api/download/route": [
+    "/api/documents/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/download/route.js"
+      "static/chunks/app/api/documents/route.js"
+    ],
+    "/api/nfaapplicantlogin/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/nfaapplicantlogin/route.js"
+    ],
+    "/userportal/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/userportal/page.css",
+      "static/chunks/app/userportal/page.js"
+    ],
+    "/api/myprofile/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/myprofile/route.js"
+    ],
+    "/api/nfajobs/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/nfajobs/route.js"
+    ],
+    "/api/myapplication/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/myapplication/route.js"
+    ],
+    "/api/proxy-image/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/proxy-image/route.js"
+    ],
+    "/api/nfaprofile/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/nfaprofile/route.js"
+    ],
+    "/api/nfaapplicantregister/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/nfaapplicantregister/route.js"
     ]
   }
 }

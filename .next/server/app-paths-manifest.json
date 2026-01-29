@@ -1,5 +1,7 @@
 {
-  "/api/download/route": "app/api/download/route.js",
-  "/downloads/page": "app/downloads/page.js",
+  "/api/nfaprofile/route": "app/api/nfaprofile/route.js",
+  "/api/proxy-image/route": "app/api/proxy-image/route.js",
+  "/careers/page": "app/careers/page.js",
+  "/userportal/page": "app/userportal/page.js",
   "/page": "app/page.js"
 }
