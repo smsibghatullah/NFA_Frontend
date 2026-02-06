@@ -275,3 +275,63 @@ nextjs-portal {
 .container-fluid {
   flex: 1;
 }
+.about-img-wrapper {
+  min-height: 420px;
+}
+
+/* Main image */
+.about-img-main {
+  width: 100%;
+  border-radius: 6px;
+}
+
+/* Overlapping image */
+.about-img-overlay {
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 65%;
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+  .about-img-overlay {
+    position: static;
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .about-img-wrapper {
+    min-height: auto;
+  }
+}
+.department-content h3 {
+  font-size: 1.4em;
+}
+
+.department-content ol,
+.department-content ul {
+  padding-left: 22px;
+}
+
+.department-content li {
+  margin-bottom: 8px;
+}
+
+.department-content p {
+  margin-bottom: 10px;
+}
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  z-index: 2;
+}
+
+.shadow {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}

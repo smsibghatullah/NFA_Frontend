@@ -17,57 +17,48 @@
       "static/css/app/page.css",
       "static/chunks/app/page.js"
     ],
-    "/careers/page": [
+    "/api/ourservices/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/careers/page.css",
-      "static/chunks/app/careers/page.js"
+      "static/chunks/app/api/ourservices/route.js"
     ],
-    "/api/documents/route": [
+    "/departments/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/documents/route.js"
+      "static/css/app/departments/page.css",
+      "static/chunks/app/departments/page.js"
     ],
-    "/api/nfaapplicantlogin/route": [
+    "/services/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/nfaapplicantlogin/route.js"
+      "static/css/app/services/page.css",
+      "static/chunks/app/services/page.js"
     ],
-    "/userportal/page": [
+    "/about/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/userportal/page.css",
-      "static/chunks/app/userportal/page.js"
+      "static/css/app/about/page.css",
+      "static/chunks/app/about/page.js"
     ],
-    "/api/myprofile/route": [
+    "/api/forensicpost/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/myprofile/route.js"
+      "static/chunks/app/api/forensicpost/route.js"
     ],
-    "/api/nfajobs/route": [
+    "/api/trainingandedu/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/nfajobs/route.js"
+      "static/chunks/app/api/trainingandedu/route.js"
     ],
-    "/api/myapplication/route": [
+    "/api/tae/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/myapplication/route.js"
+      "static/chunks/app/api/tae/route.js"
     ],
-    "/api/proxy-image/route": [
+    "/api/generalinfo/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/proxy-image/route.js"
-    ],
-    "/api/nfaprofile/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/nfaprofile/route.js"
-    ],
-    "/api/nfaapplicantregister/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/nfaapplicantregister/route.js"
+      "static/chunks/app/api/generalinfo/route.js"
     ]
   }
 }

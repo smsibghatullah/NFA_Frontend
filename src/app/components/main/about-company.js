@@ -1,127 +1,68 @@
+"use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { fetchAboutPost } from "@/app/api/about-post/route";
 
 export default function About() {
-  return (
-    <>
-      <AboutUs />
-    </>
-  );
+  return <AboutUs />;
 }
 
 const AboutUs = () => {
+  const [about, setAbout] = useState(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchAboutPost();
+      setAbout(data);
+    };
+    loadData();
+  }, []);
+
+  if (!about) return null;
+
   return (
     <div style={{ marginTop: "80px" }}>
       <div className="container">
-        {/* <div className="row">
-          <div className="col-12">
-            {/* <span
-              style={{
-                padding: "5px 20px",
-                borderRadius: "30px",
-                borderStyle: "solid",
-                borderColor: "rgb(142,142,142)",
-                color: "rgb(53,67,59)",
-                fontSize: "12px",
-              }}
-            >
-              <strong>About Us</strong>
-            </span>
-            <h2
-              data-aos="zoom-in-right"
-              style={{ fontSize: "2em", marginTop: "15px", marginBottom: "15px" }}
-            >
-              <strong>About Us</strong>
-              <br />
-            </h2>
+        <div className="row align-items-center">
+
+          {/* IMAGE COLUMN */}
+          <div className="col-md-5 position-relative about-img-wrapper">
+
+            {/* IMAGE 1 */}
+            {about.img1 && (
+              <Image
+                src={about.img1}
+                width={500}
+                height={350}
+                alt="About Image 1"
+                className="img-fluid about-img-main"
+              />
+            )}
+
+            {/* IMAGE 2 (OVERLAP) */}
+            {about.img2 && (
+              <Image
+                src={about.img2}
+                width={350}
+                height={250}
+                alt="About Image 2"
+                className="img-fluid about-img-overlay"
+              />
+            )}
+
           </div>
-        </div> */}
-        <div
-          className="row justify-content-lg-around"
-          style={{ marginTop: "20px" }}
-        >
-          <div className="col-md-5">
-            <Image
-              data-aos="zoom-in-right"
-              src={"/assets/img/NFA-about-section.svg"}
-              width={100}
-              height={100}
-              alt="About Us"
-              layout="responsive"
+
+          {/* CONTENT */}
+          <div className="col-md-6 offset-md-1">
+            <h2 style={{ fontSize: "2em", marginBottom: "20px" }}>
+              <strong>{about.title}</strong>
+            </h2>
+
+            <div
+              className="lead"
+              dangerouslySetInnerHTML={{ __html: about.content }}
             />
-          </div>
-          <div
-            data-aos="zoom-in-left"
-            className="col-sm-6 d-xl-flex flex-column justify-content-xl-center"
-          >
-            <h2
-              data-aos="zoom-in-right"
-              style={{
-                fontSize: "2em",
-                marginTop: "15px",
-                marginBottom: "15px",
-              }}
-            >
-              <strong>About Us</strong>
-              <br />
-            </h2>
-            <p className="lead">
-              <br />
-              Our national-level forensics team specializes in providing
-              comprehensive investigative solutions, upholding the highest
-              standards of integrity and accuracy. With a relentless commitment
-              to justice, we utilize state-of-the-art technology and proven
-              methodologies to uncover the truth in criminal, civil, and
-              corporate cases.
-              <br />
-            </p>
-            <p className="lead">
-              Our professionals are dedicated to supporting law enforcement
-              agencies, legal professionals, and private entities with
-              precision-driven results.
-            </p>
-            <div className="row">
-                <div className="col-6">
-                <i
-                  className="fa fa-check"
-                  style={{ color: "rgb(0,124,0)" }}
-                ></i> &nbsp;Rapid Response
-                </div>
-                <div className="col-6">
-                <i
-                  className="fa fa-check"
-                  style={{ color: "rgb(0,124,0)" }}
-                ></i> &nbsp;Court-Ready Reports
-                </div>
-            </div>
-            <div className="row mt-2">
-                <div className="col-6">
-                <i
-                  className="fa fa-check"
-                  style={{ color: "rgb(0,124,0)" }}
-                ></i> &nbsp;Expert Team
-                </div>
-                <div className="col-6">
-                <i
-                  className="fa fa-check"
-                  style={{ color: "rgb(0,124,0)" }}
-                ></i> &nbsp;High Accuracy
-                </div>
-            </div>
-            <div className="row mt-2">
-                <div className="col-6">
-                <i
-                  className="fa fa-check"
-                  style={{ color: "rgb(0,124,0)" }}
-                ></i> &nbsp;Advanced Technology
-                </div>
-                <div className="col-6">
-                <i
-                  className="fa fa-check"
-                  style={{ color: "rgb(0,124,0)" }}
-                ></i> &nbsp;Confidential & Secure
-                </div>
-            </div>
           </div>
         </div>
       </div>

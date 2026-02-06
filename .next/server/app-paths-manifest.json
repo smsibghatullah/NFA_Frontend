@@ -1,7 +1,11 @@
 {
-  "/api/nfaprofile/route": "app/api/nfaprofile/route.js",
-  "/api/proxy-image/route": "app/api/proxy-image/route.js",
-  "/careers/page": "app/careers/page.js",
-  "/userportal/page": "app/userportal/page.js",
-  "/page": "app/page.js"
+  "/api/generalinfo/route": "app/api/generalinfo/route.js",
+  "/api/ourservices/route": "app/api/ourservices/route.js",
+  "/api/forensicpost/route": "app/api/forensicpost/route.js",
+  "/api/trainingandedu/route": "app/api/trainingandedu/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/about/page": "app/about/page.js",
+  "/departments/page": "app/departments/page.js",
+  "/services/page": "app/services/page.js"
 }

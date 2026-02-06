@@ -2,9 +2,12 @@
 import { useEffect, useState } from "react";
 import Header from "../components/main/header";
 import { useRouter } from "next/navigation";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const Careers = () => {
+  useEffect(() => {
+  import("bootstrap/dist/js/bootstrap.bundle.min.js");
+}, []);
+
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -88,8 +91,11 @@ if (!res.ok) {
 localStorage.setItem("access", data.token);
 
 // ✅ CLEANUP MODAL SIDE EFFECT
-document.body.classList.remove("modal-open");
-document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+if (typeof window !== "undefined") {
+  document.body.classList.remove("modal-open");
+  document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+}
+
 
 showAlert("success", "Login successful");
 setLoginForm({ email: "", cnic: "", password: "" });

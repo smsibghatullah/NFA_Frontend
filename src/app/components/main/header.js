@@ -101,6 +101,27 @@ const Sidebar = () => {
 };
 
 const Navbar = () => {
+    const [info, setInfo] = useState({ email: "", phone: "" });
+
+  useEffect(() => {
+    async function fetchInfo() {
+      try {
+        const res = await fetch("/api/generalinfo");
+        const data = await res.json();
+        if (data.success && data.data) {
+          setInfo({
+            email: data.data.email,
+            phone: data.data.phone,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch general info:", err);
+      }
+    }
+
+    fetchInfo();
+  }, []);
+
   return (
     <>
       <div style={{ background: "#104122" }} data-aos="fade-down">
@@ -111,22 +132,13 @@ const Navbar = () => {
                 className="fa fa-envelope-o"
                 style={{ color: "rgb(255,255,255)", fontSize: "20px" }}
               ></i>
-              <span
-                style={{
-                  marginLeft: "10px",
-                  marginRight: "20px",
-                  color: "rgb(255,255,255)",
-                }}
-              >
-                info@nfa.gov.pk
+              <span style={{ marginLeft: "10px", marginRight: "20px", color: "#fff" }}>
+                {info.email || "Loading..."}
                 <br />
               </span>
-              <i
-                className="fa fa-phone"
-                style={{ color: "rgb(255,255,255)", fontSize: "20px" }}
-              ></i>
-              <span style={{ marginLeft: "10px", color: "rgb(255,255,255)" }}>
-                051-9257807
+              <i className="fa fa-phone" style={{ color: "#fff", fontSize: "20px" }}></i>
+              <span style={{ marginLeft: "10px", color: "#fff" }}>
+                {info.phone || "Loading..."}
                 <br />
               </span>
             </div>
@@ -369,10 +381,41 @@ const InfoDesk = () => {
 };
 
 const Footer = () => {
+  const [info, setInfo] = useState({
+    email: "",
+    phone: "",
+    address: "",
+    facebook: null,
+    twitter: null,
+    instagram: null,
+  });
+
+  useEffect(() => {
+    async function fetchInfo() {
+      try {
+        const res = await fetch("/api/generalinfo"); // Next.js API route
+        const data = await res.json();
+        if (data.success && data.data) {
+          setInfo({
+            email: data.data.email,
+            phone: data.data.phone,
+            address: data.data.address,
+            facebook: data.data.facebook,
+            twitter: data.data.twitter,
+            instagram: data.data.instagram,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch general info:", err);
+      }
+    }
+    fetchInfo();
+  }, []);
+
   return (
     <div data-aos="fade-up" data-aos-duration="1000">
       {/* Top Banner */}
-      <div className="container-fluid" style={{ padding: "0px" }}>
+      <div className="container-fluid p-0">
         <div className="row">
           <div className="col-md-12">
             <Image
@@ -380,7 +423,6 @@ const Footer = () => {
               height={500}
               className="img-fluid w-100"
               src="assets/img/pakistan.svg"
-              style={{ width: "100%" }}
               alt="Pakistan Banner"
             />
           </div>
@@ -417,7 +459,7 @@ const Footer = () => {
               <div className="col-sm-6 col-md-3 item">
                 <h3 className="text-uppercase">Company</h3>
                 <ul>
- <li>
+                  <li>
                     <a href="/tenders">Tender & Publications</a>
                   </li>
                   <li>
@@ -437,80 +479,80 @@ const Footer = () => {
                 <h3 className="text-uppercase">About Us</h3>
                 <ul>
                   <li>
-                    <a href="#">
-                      <strong>Address:</strong> H-11/4 Opposite Police Lines:
-                      Plot 1:2-27:28 Islamabad, 44000 Pakistan
-                    </a>
+                    <strong>Address:</strong>{" "}
+                    {info.address ? info.address.replace(/\r?\n/g, ", ") : "Loading..."}
                   </li>
                   <li>
-                    <a href="#">
-                      <strong>Phone:</strong> 051-9257807
-                    </a>
+                    <strong>Phone:</strong> {info.phone || "Loading..."}
                   </li>
                   <li>
-                    <a href="#">
-                      <strong>Email:</strong> info@nfa.gov.pk
-                    </a>
+                    <strong>Email:</strong> {info.email || "Loading..."}
                   </li>
                 </ul>
               </div>
 
               {/* Social Icons */}
               <div className="col item social">
-                <a href="#">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="icon icon-tabler icons-tabler-outline icon-tabler-brand-facebook pb-1"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3" />
-                  </svg>
-                </a>
-                <a href="#">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="icon icon-tabler icons-tabler-outline icon-tabler-brand-twitter pb-1"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c0 -.249 1.51 -2.772 1.818 -4.013z" />
-                  </svg>
-                </a>
-                <a href="#">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="icon icon-tabler icons-tabler-outline icon-tabler-brand-instagram pb-1"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z" />
-                    <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-                    <path d="M16.5 7.5v.01" />
-                  </svg>
-                </a>
-                <a href="http://Webmail.nfa.gov.pk">
+                {info.facebook && (
+                  <a href={info.facebook} target="_blank" rel="noreferrer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-brand-facebook pb-1"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3" />
+                    </svg>
+                  </a>
+                )}
+                {info.twitter && (
+                  <a href={info.twitter} target="_blank" rel="noreferrer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-brand-twitter pb-1"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c0 -.249 1.51 -2.772 1.818 -4.013z" />
+                    </svg>
+                  </a>
+                )}
+                {info.instagram && (
+                  <a href={info.instagram} target="_blank" rel="noreferrer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-brand-instagram pb-1"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z" />
+                      <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                      <path d="M16.5 7.5v.01" />
+                    </svg>
+                  </a>
+                )}
+                <a href="http://Webmail.nfa.gov.pk" target="_blank" rel="noreferrer">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width={24}
@@ -556,5 +598,7 @@ const Footer = () => {
     </div>
   );
 };
+
+
 
 export default Master_page;
