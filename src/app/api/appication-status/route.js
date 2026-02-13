@@ -1,50 +1,40 @@
-import fs from "fs";
-import path from "path";
-import * as XLSX from "xlsx";
+import { NextResponse } from "next/server";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Laravel backend
+const API_KEY = process.env.NEXT_PUBLIC_GENERAL_API_KEY;   // .env.local
 
 export async function POST(req) {
   try {
-    // Get CNIC from request body
     const { cnic } = await req.json();
 
-    if (!cnic || !/^\d{13}$/.test(cnic)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid CNIC format" }),
+    if (!cnic || !/^\d{13}$/.test(cnic.replace(/\D/g, ""))) {
+      return NextResponse.json(
+        { success: false, message: "Invalid CNIC format" },
         { status: 400 }
       );
     }
 
-    // Read Excel file
-    const filePath = path.join(process.cwd(), "private-files", "my-secret.xlsx");
-    const fileBuffer = fs.readFileSync(filePath);
-    const workbook = XLSX.read(fileBuffer, { type: "buffer" });
-    const sheetName = workbook.SheetNames[0];
-    const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    // Call Laravel API dynamically
+    const laravelRes = await fetch(
+      `${API_BASE_URL}/api/candidate?cnic=${encodeURIComponent(cnic)}&api_key=${API_KEY}`
+    );
 
-    // Match CNIC (remove dashes/spaces from file CNICs)
-    const matches = data.filter((row) => {
-      let rowCnic = row.CNIC;
-      if (typeof rowCnic === "number") rowCnic = rowCnic.toString();
-      rowCnic = rowCnic?.toString().replace(/\D/g, "").trim();
-      return rowCnic === cnic;
-    });
-
-    if (matches.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No record found" }),
-        { status: 404 }
+    if (!laravelRes.ok) {
+      const errText = await laravelRes.text();
+      return NextResponse.json(
+        { success: false, message: "Failed to fetch candidate", error: errText },
+        { status: laravelRes.status }
       );
     }
 
-    return new Response(JSON.stringify(matches), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    const data = await laravelRes.json();
 
+    // Laravel already returns single record, no need for extra filtering
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error("❌ Error reading Excel file:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to load Excel file" }),
+    console.error("Candidate API Error:", error);
+    return NextResponse.json(
+      { success: false, message: "Server Error", error: error.message },
       { status: 500 }
     );
   }

@@ -1,8 +1,36 @@
 "use client";
+import { useEffect, useState } from "react";
+
 import ContactForm from "../components/main/servicerequestform";
 import Header from "../components/main/header";
 
 const Contact = () => {
+  const [info, setInfo] = useState({
+    email: "",
+    phone: "",
+    address: "",
+  });
+
+  useEffect(() => {
+    async function fetchInfo() {
+      try {
+        const res = await fetch("/api/generalinfo");
+        const data = await res.json();
+
+        if (data.success && data.data) {
+          setInfo({
+            email: data.data.email,
+            phone: data.data.phone,
+            address: data.data.address,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch contact info:", err);
+      }
+    }
+    fetchInfo();
+  }, []);
+
   return (
     <>
       <Header>
@@ -36,7 +64,11 @@ const Contact = () => {
                 </span>
                 <div className="ms-3">
                   <h5>Phone Number</h5>
-                  <p className="lead fs-2">(051) 9257807</p>
+                  {/* <p className="lead fs-2">(051) 9257807</p> */}
+                  <p className="lead fs-2">
+  {info.phone || "Loading..."}
+</p>
+
                 </div>
               </div>
               <br></br>
@@ -61,10 +93,16 @@ const Contact = () => {
                 </span>
                 <div className="ms-3">
                   <h5>Address</h5>
-                  <p className="lead fs-2">
+                  {/* <p className="lead fs-2">
                     H 11/4 H-11, opposite to police lines, Islamabad Capital
                     Territory, Pakistan
-                  </p>
+                  </p> */}
+                  <p className="lead fs-2">
+  {info.address
+    ? info.address.replace(/\r?\n/g, ", ")
+    : "Loading..."}
+</p>
+
                 </div>
               </div>
               <br></br>
@@ -89,7 +127,11 @@ const Contact = () => {
                 </span>
                 <div className="ms-3">
                   <h5>Email</h5>
-                  <p className="lead fs-2">info@nfa.gov.pk</p>
+                  {/* <p className="lead fs-2">info@nfa.gov.pk</p> */}
+                  <p className="lead fs-2">
+  {info.email || "Loading..."}
+</p>
+
                 </div>
               </div>
             </div>
@@ -111,7 +153,9 @@ const Contact = () => {
                     scrolling="no"
                     marginHeight="0"
                     marginWidth="0"
-                    src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=H 11/4 H-11, opposite to police lines, Islamabad Capital Territory, Pakistan&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(
+    info.address || "Islamabad Pakistan"
+  )}&z=14&output=embed`}  
                   ></iframe>
                   <a href="https://sprunkiplay.com">Sprunki</a>
                 </div>

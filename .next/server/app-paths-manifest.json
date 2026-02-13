@@ -2,10 +2,12 @@
   "/api/generalinfo/route": "app/api/generalinfo/route.js",
   "/api/ourservices/route": "app/api/ourservices/route.js",
   "/api/forensicpost/route": "app/api/forensicpost/route.js",
+  "/api/aboutpage/route": "app/api/aboutpage/route.js",
   "/api/trainingandedu/route": "app/api/trainingandedu/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js",
   "/about/page": "app/about/page.js",
+  "/pioneers-of-forensics/page": "app/pioneers-of-forensics/page.js",
+  "/services/page": "app/services/page.js",
   "/departments/page": "app/departments/page.js",
-  "/services/page": "app/services/page.js"
+  "/contact/page": "app/contact/page.js"
 }

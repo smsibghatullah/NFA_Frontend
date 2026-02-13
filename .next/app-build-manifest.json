@@ -17,28 +17,15 @@
       "static/css/app/page.css",
       "static/chunks/app/page.js"
     ],
+    "/api/generalinfo/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/generalinfo/route.js"
+    ],
     "/api/ourservices/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/ourservices/route.js"
-    ],
-    "/departments/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/departments/page.css",
-      "static/chunks/app/departments/page.js"
-    ],
-    "/services/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/services/page.css",
-      "static/chunks/app/services/page.js"
-    ],
-    "/about/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/about/page.css",
-      "static/chunks/app/about/page.js"
     ],
     "/api/forensicpost/route": [
       "static/chunks/webpack.js",
@@ -55,10 +42,95 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/tae/route.js"
     ],
-    "/api/generalinfo/route": [
+    "/tenders/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/generalinfo/route.js"
+      "static/css/app/tenders/page.css",
+      "static/chunks/app/tenders/page.js"
+    ],
+    "/api/tenders/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/tenders/route.js"
+    ],
+    "/about/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/about/page.css",
+      "static/chunks/app/about/page.js"
+    ],
+    "/api/aboutpage/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/aboutpage/route.js"
+    ],
+    "/departments/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/departments/page.css",
+      "static/chunks/app/departments/page.js"
+    ],
+    "/careers/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/careers/page.css",
+      "static/chunks/app/careers/page.js"
+    ],
+    "/api/documents/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/documents/route.js"
+    ],
+    "/vision/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/vision/page.css",
+      "static/chunks/app/vision/page.js"
+    ],
+    "/api/vision/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/vision/route.js"
+    ],
+    "/downloads/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/downloads/page.css",
+      "static/chunks/app/downloads/page.js"
+    ],
+    "/api/download/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/download/route.js"
+    ],
+    "/services/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/services/page.css",
+      "static/chunks/app/services/page.js"
+    ],
+    "/pioneers-of-forensics/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/pioneers-of-forensics/page.css",
+      "static/chunks/app/pioneers-of-forensics/page.js"
+    ],
+    "/searchcnic/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/searchcnic/page.css",
+      "static/chunks/app/searchcnic/page.js"
+    ],
+    "/api/appication-status/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/appication-status/route.js"
+    ],
+    "/contact/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/contact/page.css",
+      "static/chunks/app/contact/page.js"
     ]
   }
 }

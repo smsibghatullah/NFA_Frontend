@@ -1,6 +1,22 @@
+"use client";
+
 import Header from "../components/main/header";
+import { useEffect, useState } from "react";
 
 export default function Vision() {
+  const [vision, setVision] = useState("");
+
+  useEffect(() => {
+    fetch("/api/vision")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setVision(data.data.content);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <>
       <Header>
@@ -15,7 +31,10 @@ export default function Vision() {
         >
           <div className="container" style={{ height: "100%" }}>
             <div className="row" style={{ height: "100%" }}>
-              <div data-aos="fade-right" className="col-sm-12 d-flex flex-column align-items-center justify-content-sm-center align-items-start justify-content-center align-items-start">
+              <div
+                data-aos="fade-right"
+                className="col-sm-12 d-flex flex-column align-items-center justify-content-center align-items-start"
+              >
                 <h1>
                   <strong>Our Vision</strong>
                 </h1>
@@ -24,16 +43,17 @@ export default function Vision() {
             </div>
           </div>
         </section>
+
         <br />
+
         <div className="container mt-5 mb-5">
           <div className="row">
             <div className="col-sm-12">
-              <p className="lead text-center" data-aos="zoom-in">
-                To establish NFA as the leading authority in forensic sciences,
-                ensuring scientific precision, maintaining credibility, and
-                upholding authenticity in the pursuit of justice across Pakistan
-                and beyond.
-              </p>
+              <div
+                className="lead text-center"
+                data-aos="zoom-in"
+                dangerouslySetInnerHTML={{ __html: vision }}
+              />
             </div>
           </div>
         </div>

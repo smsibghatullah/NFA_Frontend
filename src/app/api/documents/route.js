@@ -1,8 +1,13 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_KEY = process.env.GENERAL_API_KEY;
+
 export async function GET() {
   try {
     const response = await fetch(`${API_BASE_URL}/api/documents`, {
-  next: { revalidate: 60 }, // ✅ 60 sec cache
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+      },
+  // next: { revalidate: 60 }, // ✅ 60 sec cache
     });
 
     const data = await response.json();

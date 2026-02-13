@@ -23,50 +23,40 @@ function SearchCNIC() {
   };
 
   const handleSearch = async () => {
-    const { valid, message, cleaned } = validateCNIC(cnic);
+  const { valid, message, cleaned } = validateCNIC(cnic);
 
-    if (!valid) {
-      setError(message);
+  if (!valid) {
+    setError(message);
+    setResults([]);
+    return;
+  }
+
+  setError("");
+
+  try {
+    const response = await fetch("/api/appication-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cnic: cleaned }),
+    });
+
+    const data = await response.json();
+
+    if (data.success && data.data) {
+      setResults([data.data]); // Laravel returns single object, wrap in array for table
+    } else {
+      setError(
+        "❌ No record found for the provided CNIC. Please check your CNIC or contact the recruitment cell."
+      );
       setResults([]);
-      return;
     }
+  } catch (err) {
+    console.error("❌ Error fetching data:", err);
+    setError("❌ Something went wrong while fetching data.");
+    setResults([]);
+  }
+};
 
-    setError("");
-
-    try {
-      const response = await fetch("/api/appication-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cnic: cleaned }),
-      });
-
-
-      // Directly parse JSON
-      const data = await response.json();
-
-      // Match CNIC (remove any non-digits from both sides)
-      const matches = data.filter((row) => {
-        let rowCnic = row.CNIC;
-        if (typeof rowCnic === "number") {
-          rowCnic = rowCnic.toString();
-        }
-        rowCnic = rowCnic?.toString().replace(/\D/g, "").trim();
-        return rowCnic === cleaned;
-      });
-
-      if (matches.length > 0) {
-        setResults(matches);
-      } else {
-        setError(
-          "❌ No record found for the provided CNIC. Please ensure you entered the correct number or contact the recruitment cell for assistance."
-        );
-        setResults([]);
-      }
-    } catch (err) {
-      console.error(`❌ Error fetching data:`, err);
-      setError("❌ Something went wrong while fetching data.");
-    }
-  };
 
   return (
     <>
